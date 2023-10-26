@@ -61,33 +61,55 @@ class _HomeState extends State<Home> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    'All tasks',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                ),
+                    padding: const EdgeInsets.all(16.0),
+                    child: _taskList.isNotEmpty
+                        ? Text(
+                            'All tasks',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          )
+                        : null),
                 Expanded(
-                  child: ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _taskList.length + 1,
-                    itemBuilder: (BuildContext context, int index) {
-                      if (index == 0) {
-                        return Container();
-                      } else {
-                        final task = _taskList[index - 1];
-                        return taskCard(
-                          id: task.id,
-                          title: task.title,
-                          description: task.description,
-                          deadline: task.deadline,
-                        );
-                      }
-                    },
-                  ),
+                  child: _taskList.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.inbox_outlined,
+                                size: 60,
+                                color: Colors.grey,
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                'Item Empty',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: _taskList.length + 1,
+                          itemBuilder: (BuildContext context, int index) {
+                            if (index == 0) {
+                              return Container();
+                            } else {
+                              final task = _taskList[index - 1];
+                              return taskCard(
+                                id: task.id,
+                                title: task.title,
+                                description: task.description,
+                                deadline: task.deadline,
+                              );
+                            }
+                          },
+                        ),
                 ),
               ],
             ),

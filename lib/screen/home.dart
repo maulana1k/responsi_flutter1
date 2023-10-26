@@ -52,68 +52,64 @@ class _HomeState extends State<Home> {
       body: RefreshIndicator(
         onRefresh: () async {
           _getAllData();
+          await Future.delayed(const Duration(seconds: 2));
         },
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: _taskList.isNotEmpty
-                        ? Text(
-                            'All tasks',
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: _taskList.isNotEmpty
+                  ? Text(
+                      'All tasks',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    )
+                  : Container(),
+            ),
+            Expanded(
+              child: _taskList.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.inbox_outlined,
+                            size: 60,
+                            color: Colors.grey,
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Item Empty',
                             style: Theme.of(context)
                                 .textTheme
-                                .titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          )
-                        : null),
-                Expanded(
-                  child: _taskList.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.inbox_outlined,
-                                size: 60,
-                                color: Colors.grey,
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                'Item Empty',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge
-                                    ?.copyWith(color: Colors.grey),
-                              ),
-                            ],
+                                .titleLarge
+                                ?.copyWith(color: Colors.grey),
                           ),
-                        )
-                      : ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: _taskList.length + 1,
-                          itemBuilder: (BuildContext context, int index) {
-                            if (index == 0) {
-                              return Container();
-                            } else {
-                              final task = _taskList[index - 1];
-                              return taskCard(
-                                id: task.id,
-                                title: task.title,
-                                description: task.description,
-                                deadline: task.deadline,
-                              );
-                            }
-                          },
-                        ),
-                ),
-              ],
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: _taskList.length + 1,
+                      itemBuilder: (BuildContext context, int index) {
+                        if (index == 0) {
+                          return Container();
+                        } else {
+                          final task = _taskList[index - 1];
+                          return taskCard(
+                            id: task.id,
+                            title: task.title,
+                            description: task.description,
+                            deadline: task.deadline,
+                          );
+                        }
+                      },
+                    ),
             ),
-          ),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -174,8 +170,8 @@ class _HomeState extends State<Home> {
                             .textTheme
                             .headlineLarge
                             ?.copyWith(fontWeight: FontWeight.bold),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                        // maxLines: 2,
+                        // overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     Row(
@@ -242,7 +238,10 @@ class _HomeState extends State<Home> {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [Text(title), Text(deadline)],
+              children: [
+                Expanded(child: Text(title, overflow: TextOverflow.ellipsis)),
+                Text(deadline, overflow: TextOverflow.ellipsis)
+              ],
             ),
             Text(description)
           ],

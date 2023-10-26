@@ -46,34 +46,52 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text("Task Manager", style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: RefreshIndicator(
         onRefresh: () async {
           _getAllData();
         },
-        child: ListView.builder(
+        child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
-          itemCount: _taskList.length + 1,
-          itemBuilder: (BuildContext context, int index) {
-            if (index == 0) {
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'All tasks',
-                  style: Theme.of(context).textTheme.titleLarge,
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'All tasks',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
                 ),
-              );
-            } else {
-              final task = _taskList[index - 1];
-              return taskCard(
-                id: task.id,
-                title: task.title,
-                description: task.description,
-                deadline: task.deadline,
-              );
-            }
-          },
+                Expanded(
+                  child: ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _taskList.length + 1,
+                    itemBuilder: (BuildContext context, int index) {
+                      if (index == 0) {
+                        return Container();
+                      } else {
+                        final task = _taskList[index - 1];
+                        return taskCard(
+                          id: task.id,
+                          title: task.title,
+                          description: task.description,
+                          deadline: task.deadline,
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -106,6 +124,7 @@ class _HomeState extends State<Home> {
               await APIService.delete(id);
               Navigator.of(context).pop();
               closeModal();
+              _getAllData();
             },
             child: const Text('Hapus'),
           ),
